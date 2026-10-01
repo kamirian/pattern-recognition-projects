@@ -1,6 +1,8 @@
-# Selected Course Projects
+# Pattern Recognition Projects (ENEE 633)
 
-A collection of three machine learning projects spanning classical methods, deep learning, and LLM efficiency research.
+Two course projects from ENEE 633 (Statistical Pattern Recognition): image classification with classical machine learning and transfer learning, and face recognition with dimensionality reduction and kernel classifiers.
+
+My KV-cache quantization project for LLaMA-2 is in its own repository: [kivi-kv-cache-quantization](https://github.com/kamirian/kivi-kv-cache-quantization).
 
 ---
 
@@ -44,12 +46,12 @@ Evaluates classical face recognition methods on a 200-subject dataset (neutral, 
 
 | Notebook | Method | Best Task 1 | Best Task 2 |
 |----------|--------|------------|------------|
-| `PCA.ipynb` | PCA + nearest-centroid | ~75% | — |
-| `Bayes.ipynb` | PCA/MDA + Gaussian Bayes (QDA-style, regularized) | ~80% | ~88% |
-| `K-NN.ipynb` | PCA/MDA + K-nearest neighbors | ~85% | ~89% |
-| `KernelSVM.ipynb` | PCA/MDA + kernel SVM (linear/RBF/polynomial) | ~89% | ~91.25% |
-| `MDA.ipynb` | MDA standalone | baseline | ~86% |
-| `adaboost-svm.ipynb` | AdaBoost with custom SVM weak learners | ~94% | ~90% |
+| `PCA.ipynb` | PCA projections of the data (visualization) | — | — |
+| `MDA.ipynb` | MDA projections of the data (visualization) | — | — |
+| `Bayes.ipynb` | Gaussian Bayes on raw, PCA and MDA features | 65.0% (MDA, 139 components) | 92.5% (MDA) |
+| `K-NN.ipynb` | k-NN on raw, PCA and MDA features | 62.5% (MDA, k=3) | 91.25% (PCA, k=13; MDA, k=1) |
+| `KernelSVM.ipynb` | Kernel SVM (CVXOPT and gradient descent) | — | 93.75% (RBF, CVXOPT); 91.25% (RBF, gradient descent) |
+| `adaboost-svm.ipynb` | AdaBoost with SVM weak learners | — | 93.75% (PCA, 50 components) |
 
 Shared helpers (`compute_pca`, `compute_mda`, `separate_train_test_manual`, `plot_classification_results`, and the SVM kernels) live in `face_utils.py`. Run each notebook from inside `face_recognition/` so it can import them.
 
@@ -64,47 +66,10 @@ Shared helpers (`compute_pca`, `compute_mda`, `separate_train_test_manual`, `plo
 
 ---
 
-### 3. KIVI: 2-Bit KV-Cache Quantization for LLaMA (7B & 13B)
-
-`kv_cache_kivi/`
-
-Implements and evaluates **KIVI** — a training-free, 2-bit KV-cache quantization scheme applied to LLaMA-2 7B and 13B.
-
-**Key idea:** Replace full-precision (FP16) attention key-value tensors with 2-bit group-quantized representations, keeping a small residual buffer of recent full-precision tokens. No retraining required.
-
-**Implementation:**
-- `quantize_per_token` / `quantize_per_channel` — 2-bit asymmetric quantization with configurable group size
-- `KIVICache` — quantized KV-cache manager with residual buffer and on-the-fly dequantization
-- `LlamaAttentionWithKIVI` — drop-in replacement for LLaMA self-attention
-- `replace_llama_attention_with_kivi` — applies KIVI to every attention layer in a loaded model
-
-**Benchmarks evaluated:**
-
-| Benchmark | Model | Metric |
-|-----------|-------|--------|
-| CNN/DailyMail | LLaMA-2 7B | ROUGE-L, BERTScore, token match rate |
-| GSM8K | LLaMA-2 13B | Exact match accuracy |
-| CoQA | LLaMA-2 7B | F1 (raw and robust), ROUGE-L, BERTScore |
-
-Memory analysis includes theoretical KV-cache reduction (~8× for 2-bit vs FP16) and empirical peak GPU memory profiling.
-
-Pre-computed results are stored in `results/`.
-
-**Note:** This was my individual contribution to a team project on KV-cache efficiency methods. The full team report (which also covers H2O, Streaming-LLM, ZipCache, and StreamingSliding) is included as `report.pdf`.
-
-**Files:**
-- `kivi/` — KIVI implementation (quantization, cache, attention, memory profiling) and benchmark code in `kivi/benchmarks/`
-- `utils.py` — JSON helper and token-match metric
-- `kivi_llama_7b_13b.ipynb` — runs the unit tests, memory profiling, and the three benchmarks
-- `results/` — pre-computed JSON results, named `{examples|memory|results}_{cnn|coqa|gsm8k_13b}_Kiyan.json`
-- `report.pdf` — team report (CMSC 723)
-
----
-
 ## Repository Structure
 
 ```
-Selected_projects/
+pattern-recognition-projects/
 ├── image_classification/
 │   ├── image_classification.ipynb
 │   └── report.pdf
@@ -120,15 +85,6 @@ Selected_projects/
 │   ├── illumination.mat  (illumination variation subset)
 │   ├── pose.mat          (pose variation subset)
 │   └── report.pdf
-├── kv_cache_kivi/
-│   ├── kivi/
-│   │   ├── quantization.py, cache.py, attention.py, memory.py
-│   │   └── benchmarks/ (cnn_dm.py, gsm8k.py, coqa.py)
-│   ├── utils.py
-│   ├── kivi_llama_7b_13b.ipynb
-│   ├── requirements.txt
-│   ├── results/
-│   └── report.pdf
 └── requirements.txt
 ```
 
@@ -137,11 +93,7 @@ Selected_projects/
 ## Installation
 
 ```bash
-# Image classification and face recognition
 pip install -r requirements.txt
-
-# KIVI (requires a CUDA GPU and a Hugging Face token with LLaMA-2 access)
-pip install -r kv_cache_kivi/requirements.txt
 ```
 
 ---
@@ -149,10 +101,10 @@ pip install -r kv_cache_kivi/requirements.txt
 ## Citation
 
 ```bibtex
-@misc{amirian2025selected,
+@misc{amirian2025patternrecognition,
   author = {Kiyan Amirian},
-  title  = {Selected Course Projects: Image Classification, Face Recognition, and KIVI KV-Cache Quantization},
+  title  = {Pattern Recognition Projects: Image Classification and Face Recognition},
   year   = {2025},
-  url    = {https://github.com/kamirian/Selected_projects}
+  url    = {https://github.com/kamirian/pattern-recognition-projects}
 }
 ```
