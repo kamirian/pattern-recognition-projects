@@ -1,0 +1,8 @@
+# Face recognition and image classification notebooks
+numpy
+scipy
+matplotlib
+cvxopt
+scikit-learn
+seaborn
+tensorflow
