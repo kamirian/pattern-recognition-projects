@@ -16,11 +16,11 @@ Benchmarks a progression of methods on MNIST (handwritten digits) and a monkey-s
 
 | Method | Dataset | Key result |
 |--------|---------|-----------|
-| SVM (RBF) + PCA (50 components) | MNIST | 97.1% accuracy |
+| SVM (RBF) + PCA (50 components) | MNIST | 97.1% test accuracy |
 | Logistic regression from scratch (NumPy softmax) | MNIST | competitive with sklearn |
 | Custom CNN | MNIST | 95.48% |
-| VGG19 (frozen backbone) | Monkey species | 93.38% |
-| VGG19 (fine-tuned) | Monkey species | 97.06% |
+| VGG19 (frozen backbone) | Monkey species | 93.38% validation accuracy |
+| VGG19 (fine-tuned) | Monkey species | 97.06% validation accuracy |
 
 The notebook implements logistic regression from scratch using only NumPy (softmax activation, cross-entropy loss, gradient descent), providing a direct comparison against sklearn's L-BFGS solver. The VGG19 section demonstrates why fine-tuning outperforms frozen-feature extraction on a small domain-shift dataset.
 
